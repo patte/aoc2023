@@ -43,32 +43,21 @@ struct AlmanacMapRange {
 
 #[derive(Debug)]
 struct AlmanacMap {
-    #[allow(dead_code)] // actually used when logging maps
     title: String,
     ranges: Vec<AlmanacMapRange>,
 }
 
 fn main() {
     println!("Hello, adventofcode.com/2023/day/5 from rust!");
-    let args = std::env::args().collect::<Vec<String>>();
 
-    //let almanac = EXAMPLE;
-    let almanac = std::fs::read_to_string("input.txt").unwrap();
+    let almanac = EXAMPLE;
+    //let almanac = std::fs::read_to_string("input.txt").unwrap();
 
     // print first 4 lines
     println!(
-        "almanac:\n{}",
+        "almanac:\n{}\n---------------------",
         almanac.lines().take(4).collect::<Vec<&str>>().join("\n")
     );
-
-    // first param, default 1
-    let part = if args.len() > 1 {
-        args[1].parse::<u32>().unwrap()
-    } else {
-        1
-    };
-
-    println!("--- Part {} ---", if part == 1 { "One" } else { "Two" });
 
     let mut seeds: Vec<u32> = Vec::new();
     let mut maps: Vec<AlmanacMap> = Vec::new();
@@ -103,47 +92,28 @@ fn main() {
         }
     }
     println!("seeds: {:?}", seeds);
+    //println!("maps: {:#?}", maps);
 
-    let mut min_destination = u32::MAX;
-    if part == 1 {
-        for seed in seeds {
-            let destination = get_destination(seed, &maps);
-            if destination < min_destination {
-                min_destination = destination;
+    let mut destinations: Vec<u32> = Vec::new();
+    // go from seed to destination by consulting each map
+    for seed in seeds {
+        let mut current_value = seed;
+        for map in maps.iter() {
+            let map_range: Option<&AlmanacMapRange> = map.ranges.iter().find(|r| {
+                r.source_range <= current_value && current_value <= r.source_range + r.range_length
+            });
+            if map_range.is_some() {
+                let map_range = map_range.unwrap();
+                // jump
+                current_value =
+                    map_range.destination_range + (current_value - map_range.source_range);
             }
+            // else: the current_value stays the same
         }
-    } else if part == 2 {
-        for i in 0..seeds.len() / 2 {
-            let start = seeds[i * 2];
-            let length = seeds[i * 2 + 1];
-            println!(
-                "start: {}, length: {}, min_destination: {}",
-                start, length, min_destination
-            );
-            for j in start..start + length as u32 {
-                let destination = get_destination(j as u32, &maps);
-                if destination < min_destination {
-                    min_destination = destination;
-                }
-            }
-        }
+        destinations.push(current_value);
     }
+    let min_destination = destinations.iter().min().unwrap();
 
+    println!("destinations: {:?}", destinations);
     println!("min_destination: {:?}", min_destination);
-}
-
-fn get_destination(seed: u32, maps: &Vec<AlmanacMap>) -> u32 {
-    let mut current_value = seed;
-    for map in maps.iter() {
-        let map_range: Option<&AlmanacMapRange> = map.ranges.iter().find(|r| {
-            r.source_range <= current_value && current_value < r.source_range + r.range_length
-        });
-        if map_range.is_some() {
-            let map_range = map_range.unwrap();
-            // jump
-            current_value = map_range.destination_range + (current_value - map_range.source_range);
-        }
-        // else: the current_value stays the same
-    }
-    current_value
 }
