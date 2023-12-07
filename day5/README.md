@@ -13,7 +13,7 @@ cargo watch -x "run --release"
 ## Output
 ### Part 1
 ```
-cargo build && time target/release/day5 1
+cargo build --release && time target/release/day5 1
    Compiling day5 v0.1.0 (~/src/aoc/day5)
     Finished dev [unoptimized + debuginfo] target(s) in 0.12s
 Hello, adventofcode.com/2023/day/5 from rust!
@@ -29,7 +29,7 @@ target/release/day5 1  0.00s user 0.00s system 72% cpu 0.002 total
 
 ### Part 2
 ```
-cargo build && time target/release/day5 2
+cargo build --release && time target/release/day5 2
     Finished dev [unoptimized + debuginfo] target(s) in 0.00s
 Hello, adventofcode.com/2023/day/5 from rust!
 seeds: 3139431799 50198205 3647185634 110151761 2478641666 139825503 498892555 8913570 961540761 489996751 568452082 100080382 907727477 42158689 1617552130 312026427 342640189 97088268 2049289560 336766062
