@@ -13,8 +13,6 @@ cargo watch -x "run --release"
 ## Output
 ### Part 1
 ```
-cargo build --release && time target/release/day7
-    Finished release [optimized] target(s) in 0.25s
 Hello, adventofcode.com/2023/day/7 from rust!
 --- Part One ---
 hands: [

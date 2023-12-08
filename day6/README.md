@@ -13,8 +13,6 @@ cargo watch -x "run --release"
 ## Output
 ### Part 1
 ```
-cargo build --release && time target/release/day6
-    Finished release [optimized] target(s) in 0.00s
 t: 54, dw: 239, x: 45, v1: 4.8640556
 t: 70, dw: 1142, x: 19, v1: 25.889566
 t: 82, dw: 1295, x: 39, v1: 21.353117
@@ -25,8 +23,6 @@ target/release/day6  0.00s user 0.00s system 2% cpu 0.072 total
 
 ### Part 2
 ```
-cargo build --release && time target/release/day6 2
-    Finished release [optimized] target(s) in 0.00s
 Hello, adventofcode.com/2023/day/6 from rust!
 --- Part Two ---
 t: 54708276, dw: 239114220000000, x: 45128024, v1: 4790126
