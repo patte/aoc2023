@@ -16,17 +16,20 @@ QQQJA 483";
 //A23A4 1
 //23456 0";
 
-static CARDS: [&str; 13] = [
+static CARDS_PART1: [&str; 13] = [
     "2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A",
 ];
+static CARDS_PART2: [&str; 13] = [
+    "J", "2", "3", "4", "5", "6", "7", "8", "9", "T", "Q", "K", "A",
+];
 
-fn get_rank_for_card(c: char) -> usize {
-    CARDS.iter().position(|&x| x == c.to_string()).unwrap()
-    //+ CARDS[0].parse::<usize>().unwrap() // move so that 2 has rank 2
+fn get_rank_for_card(c: char, cards: &[&str]) -> usize {
+    cards.iter().position(|&x| x == c.to_string()).unwrap()
+    //+ cards[0].parse::<usize>().unwrap() // move so that 2 has rank 2
 }
 
-fn get_card_for_rank(r: usize) -> String {
-    CARDS[r].to_string()
+fn get_card_for_rank(r: usize, cards: &[&str]) -> String {
+    cards[r].to_string()
 }
 
 static TYPS: [&str; 7] = [
@@ -63,6 +66,12 @@ fn main() {
     };
     println!("--- Part {} ---", if part == 1 { "One" } else { "Two" });
 
+    let CARDS = if part == 1 {
+        &CARDS_PART1
+    } else {
+        &CARDS_PART2
+    };
+
     //let input = EXAMPLE;
     let input = std::fs::read_to_string("input.txt").unwrap();
 
@@ -73,7 +82,7 @@ fn main() {
 
         let card_ranks = cards
             .chars()
-            .map(|c| get_rank_for_card(c))
+            .map(|c| get_rank_for_card(c, CARDS))
             .collect::<Vec<usize>>();
 
         let mut card_ranks_sorted = card_ranks.clone();
@@ -81,7 +90,7 @@ fn main() {
 
         let cards_sorted = card_ranks_sorted
             .iter()
-            .map(|&r| get_card_for_rank(r))
+            .map(|&r| get_card_for_rank(r, CARDS))
             .collect::<String>();
 
         let mut card_groups: Vec<(String, usize)> = Vec::new();
@@ -98,29 +107,50 @@ fn main() {
             }
         }
         card_groups.push(last_card_group);
+
         card_groups.sort_by(|a, b| b.1.cmp(&a.1));
+
+        // part2
+        if part == 2 {
+            let contains_joker = cards.contains("J");
+            if contains_joker && card_groups.len() > 1 {
+                let mut joker_group_index = 0;
+                let mut joker_group_counter = 0;
+                for (i, g) in card_groups.iter().enumerate() {
+                    if g.0 == "J" {
+                        joker_group_index = i;
+                        joker_group_counter = g.1;
+                        break;
+                    }
+                }
+                let apply_to_group_index = if joker_group_index == 0 { 1 } else { 0 };
+                card_groups[apply_to_group_index].1 += joker_group_counter;
+                card_groups.remove(joker_group_index);
+            }
+        }
+
         let card_groups_len = card_groups.len();
 
-        let mut typ = "".to_string();
+        let mut typ = "";
         if card_groups_len == 1 {
-            typ = "Five of a Kind".to_string();
+            typ = "Five of a Kind";
         } else if card_groups_len == 2 {
             if card_groups[0].1 == 4 {
-                typ = "Four of a Kind".to_string();
+                typ = "Four of a Kind";
             } else {
-                typ = "Full House".to_string();
+                typ = "Full House";
             }
         } else if card_groups_len == 3 {
             if card_groups[0].1 == 3 {
-                typ = "Three of a Kind".to_string();
+                typ = "Three of a Kind";
             }
             if card_groups[0].1 == 2 {
-                typ = "Two Pairs".to_string();
+                typ = "Two Pairs";
             }
         } else if card_groups_len == 4 {
-            typ = "One Pair".to_string();
+            typ = "One Pair";
         } else if card_groups_len == 5 {
-            typ = "High Card".to_string();
+            typ = "High Card";
         }
 
         let type_rank = get_rank_for_typ(&typ) as u64;
@@ -128,7 +158,7 @@ fn main() {
         let hand = Hand {
             cards,
             card_ranks,
-            typ,
+            typ: typ.to_string(),
             type_rank,
             rank: 0,
             bid: line_parts.next().unwrap().parse::<u64>().unwrap(),
@@ -159,45 +189,3 @@ fn main() {
     let answer = hands.iter().map(|h| h.bid * h.rank).sum::<u64>();
     println!("answer: {}", answer)
 }
-
-/*
-2 highest hands from example:
-Hand {
-    cards: "QQQJA",
-    card_ranks: [
-        10,
-        10,
-        10,
-        9,
-        12,
-    ],
-    card_groups: [
-        ( "Q", 3, ),
-        ( "J", 1, ),
-        ( "A", 1, ),
-    ],
-    typ: "Three of a Kind",
-    type_rank: 3,
-    rank: 5,
-    bid: 483,
-},
-Hand {
-    cards: "T55J5",
-    card_ranks: [
-        8,
-        3,
-        3,
-        9,
-        3,
-    ],
-    card_groups: [
-        ( "5", 3, ),
-        ( "T", 1, ),
-        ( "J", 1, ),
-    ],
-    typ: "Three of a Kind",
-    type_rank: 3,
-    rank: 4,
-    bid: 684,
-},
- */
