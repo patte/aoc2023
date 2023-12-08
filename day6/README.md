@@ -22,3 +22,14 @@ t: 75, dw: 1253, x: 24, v1: 25.120583
 answer: 800280
 target/release/day6  0.00s user 0.00s system 2% cpu 0.072 total
 ```
+
+### Part 2
+```
+cargo build --release && time target/release/day6 2
+    Finished release [optimized] target(s) in 0.00s
+Hello, adventofcode.com/2023/day/5 from rust!
+--- Part Two ---
+t: 54708276, dw: 239114220000000, x: 45128024, v1: 4790126
+answer: 45128024
+target/release/day6 2  0.00s user 0.00s system 2% cpu 0.066 total
+```
