@@ -68,7 +68,7 @@ fn remove_whitespace(line: &str) -> String {
 }
 
 fn main() {
-    println!("Hello, adventofcode.com/2023/day/5 from rust!");
+    println!("Hello, adventofcode.com/2023/day/6 from rust!");
     let args = std::env::args().collect::<Vec<String>>();
     let part = if args.len() > 1 {
         args[1].parse::<u64>().unwrap()

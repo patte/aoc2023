@@ -1,4 +1,4 @@
-# day5
+# day6
 
 to run:
 ```bash
@@ -27,7 +27,7 @@ target/release/day6  0.00s user 0.00s system 2% cpu 0.072 total
 ```
 cargo build --release && time target/release/day6 2
     Finished release [optimized] target(s) in 0.00s
-Hello, adventofcode.com/2023/day/5 from rust!
+Hello, adventofcode.com/2023/day/6 from rust!
 --- Part Two ---
 t: 54708276, dw: 239114220000000, x: 45128024, v1: 4790126
 answer: 45128024
