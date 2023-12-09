@@ -14,32 +14,21 @@ DDD = (DDD, DDD)
 EEE = (EEE, EEE)
 GGG = (GGG, GGG)
 ZZZ = (ZZZ, ZZZ)";
+// answer: 2
 
-// 🎄🎄🎄🎄🎄🎄🎄🎄🎄🎄
-// this could be solved with a hash map and made fast with a tree
+// this can be solved with a hash map and made fast with a tree
 // for now only the hash map is implemented, as it solves the example in 0.01s
 //
 // nice tree library:
 // https://github.com/saschagrunert/indextree
+// 🎄🎄🎄🎄🎄🎄🎄🎄🎄🎄
 
-fn main() {
-    println!("Hello, adventofcode.com/2023/day/8 from rust!");
-    let args = std::env::args().collect::<Vec<String>>();
-    let part = if args.len() > 1 {
-        args[1].parse::<u64>().unwrap()
-    } else {
-        1
-    };
-    println!("--- Part {} ---", if part == 1 { "One" } else { "Two" });
-
-    //let input = EXAMPLE;
-    let input = std::fs::read_to_string("input.txt").unwrap();
-
+fn parse_input(input: &str) -> (String, HashMap<String, (String, String)>) {
     let mut lines = input.lines();
 
     // LRLLR (round robin)
     let directions = lines.next().unwrap();
-    println!("{}", directions);
+    println!("directions: {}", directions);
 
     let mut map_entries = HashMap::new();
     for line in lines {
@@ -47,7 +36,7 @@ fn main() {
             continue;
         }
 
-        // parse line
+        // parse line eg.:
         // AAA = (BBB, CCC)
         let (node, (edge_left, edge_right)) = line
             .split_once(" = (")
@@ -67,12 +56,31 @@ fn main() {
     }
     //println!("{:#?}", map_entries);
 
+    (directions.to_string(), map_entries)
+}
+
+fn main() {
+    println!("✨ 💫 ✨ ⭐️ ✨ 💫 ✨ ✨ 💫 ✨ ⭐️ ✨ 💫 ✨ ✨ 💫");
+    println!("Hello, adventofcode.com/2023/day/8 from rust!");
+
+    let args = std::env::args().collect::<Vec<String>>();
+    let part = if args.len() > 1 {
+        args[1].parse::<u64>().unwrap()
+    } else {
+        1
+    };
+    println!("--- Part {} ---", if part == 1 { "One" } else { "Two" });
+
+    //let input = EXAMPLE;
+    let input = std::fs::read_to_string("input.txt").unwrap();
+
+    let (directions, map_entries) = parse_input(&input);
+
     let mut current_node = "AAA";
     let mut step_count = 0;
-    for direction_index in (0..directions.len()).cycle() {
+    for direction in directions.chars().cycle() {
         match map_entries.get(current_node) {
             Some((edge_left, edge_right)) => {
-                let direction = directions.chars().nth(direction_index).unwrap();
                 if step_count < 4 {
                     print!("{}-[{}]->", current_node, direction);
                 } else if step_count == 4 {
@@ -86,7 +94,7 @@ fn main() {
                         current_node = edge_right;
                     }
                     _ => {
-                        panic!("Unknown direction {}", direction);
+                        panic!("direction not found {}", direction);
                     }
                 }
                 step_count += 1;
@@ -95,7 +103,7 @@ fn main() {
                 }
             }
             None => {
-                panic!("{current_node} not found in map!")
+                panic!("node not found {}", current_node);
             }
         }
         if current_node == "ZZZ" {
