@@ -46,28 +46,26 @@ fn main() {
         if line.is_empty() {
             continue;
         }
-        // println!("{}", line);
 
         // parse line
+        // AAA = (BBB, CCC)
         let (node, (edge_left, edge_right)) = line
-            .split_once('=')
-            .map(|(n, d)| {
-                let edges = d
-                    .trim()
-                    .replace("(", "")
-                    .replace(",", "")
-                    .replace(")", "")
-                    .split_once(' ')
-                    .map(|(l, r)| (l.to_string(), r.to_string()))
-                    .unwrap();
-                (n.trim().to_string(), edges)
+            .split_once(" = (")
+            .map(|(n, e)| {
+                (
+                    n.to_string(),
+                    e[..8] // remove end bracket
+                        .split_once(", ")
+                        .map(|(l, r)| (l.to_string(), r.to_string()))
+                        .unwrap(),
+                )
             })
             .unwrap();
 
         // store in map
         map_entries.insert(node, (edge_left, edge_right));
     }
-    // println!("{:#?}", map_entries);
+    //println!("{:#?}", map_entries);
 
     let mut current_node = "AAA";
     let mut step_count = 0;
@@ -75,7 +73,11 @@ fn main() {
         match map_entries.get(current_node) {
             Some((edge_left, edge_right)) => {
                 let direction = directions.chars().nth(direction_index).unwrap();
-                print!("{}-{}->", current_node, direction);
+                if step_count < 4 {
+                    print!("{}-[{}]->", current_node, direction);
+                } else if step_count == 4 {
+                    println!("...");
+                }
                 match direction {
                     'L' => {
                         current_node = edge_left;
@@ -88,7 +90,9 @@ fn main() {
                     }
                 }
                 step_count += 1;
-                println!("{} {}", current_node, step_count);
+                if step_count < 5 {
+                    println!("{} {}", current_node, step_count);
+                }
             }
             None => {
                 panic!("{current_node} not found in map!")
