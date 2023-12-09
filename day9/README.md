@@ -1,6 +1,6 @@
 # day9
 
-I asked chatGPT4 about how to think about this problem, [but it did not come up](chatGPT.txt) with a different approach than the one outlined in the problem statement (build up difference pyramids).
+I asked chatGPT4 about how to think about this problem, [but it did not come up](chatGPT4.txt) with a different approach than the one outlined in the problem statement (build up difference pyramids).
 
 to run:
 ```bash
