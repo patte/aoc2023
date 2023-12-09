@@ -2,12 +2,12 @@
 
 to run:
 ```bash
-cargo build --release && time target/release/day8
+cargo build --release && time target/release/day8 [1|2]
 ```
 
 to develop:
 ```bash
-cargo watch -x "run --release"
+cargo watch -x "run --release [1|2]"
 ```
 
 ## Output
