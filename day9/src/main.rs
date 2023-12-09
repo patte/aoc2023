@@ -27,8 +27,8 @@ fn get_diffs(history: &Vec<i64>) -> Vec<i64> {
     history
         .iter()
         .enumerate()
-        .filter(|(i, _)| *i > 0)
-        .map(|(i, n)| if i > 0 { n - history[i - 1] } else { 0 })
+        .filter(|(i, _)| *i > 0) // skip first entry
+        .map(|(i, n)| n - history[i - 1]) // diff to previous entry
         .collect::<Vec<i64>>()
 }
 
