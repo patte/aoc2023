@@ -58,9 +58,11 @@ fn main() {
     }
 
     let mut next_entries = Vec::new();
+    let mut previous_entries = Vec::new();
     for history in histories.iter() {
         let mut last_diff = history.clone();
         let mut last_entry_of_diffs = vec![last_diff.iter().last().unwrap().clone()];
+        let mut first_entry_of_diffs = vec![last_diff.iter().next().unwrap().clone()];
 
         loop {
             let diff = get_diffs(&last_diff).to_owned();
@@ -68,15 +70,27 @@ fn main() {
                 break;
             }
             last_entry_of_diffs.push(diff.iter().last().unwrap().clone());
+            first_entry_of_diffs.push(diff.iter().next().unwrap().clone());
             last_diff = diff;
         }
-        //println!("last_diff: {:?}", last_diff);
-        //println!("last_entry_of_diffs: {:?}", last_entry_of_diffs);
+        // println!("last_diff: {:?}", last_diff);
+        // println!("last_entry_of_diffs: {:?}", last_entry_of_diffs);
+        // println!("first_entry_of_diffs: {:?}", first_entry_of_diffs);
         println!("⏅ levels: {:?}", last_entry_of_diffs.len());
 
         let next_entry = last_entry_of_diffs.iter().sum::<i64>();
         next_entries.push(next_entry);
+
+        let previous_entry = first_entry_of_diffs
+            .iter()
+            .rev()
+            .enumerate()
+            .fold(0, |acc, (i, n)| if i == 0 { *n } else { n - acc });
+        previous_entries.push(previous_entry);
     }
-    let sum_of_next_entries = next_entries.iter().sum::<i64>();
-    println!("answer: {:?}", sum_of_next_entries);
+    let answer = match part {
+        2 => previous_entries.iter().sum::<i64>(),
+        _ => next_entries.iter().sum::<i64>(),
+    };
+    println!("answer: {:?}", answer);
 }
