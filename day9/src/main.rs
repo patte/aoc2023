@@ -65,7 +65,7 @@ fn main() {
         let mut first_entry_of_diffs = vec![last_diff.iter().next().unwrap().clone()];
 
         loop {
-            let diff = get_diffs(&last_diff).to_owned();
+            let diff = get_diffs(&last_diff);
             if diff.iter().all(|d| d == &0) {
                 break;
             }

@@ -48,8 +48,10 @@ fn get_rank_for_typ(typ: &str) -> usize {
 
 #[derive(Debug, Clone)]
 struct Hand {
+    #[allow(dead_code)]
     cards: String,
     card_ranks: Vec<usize>,
+    #[allow(dead_code)]
     typ: String,
     type_rank: u64,
     rank: u64,
@@ -66,6 +68,7 @@ fn main() {
     };
     println!("--- Part {} ---", if part == 1 { "One" } else { "Two" });
 
+    #[allow(non_snake_case)]
     let CARDS = if part == 1 {
         &CARDS_PART1
     } else {
