@@ -1,5 +1,11 @@
 # day5
 
+Solved in rust, also available as website.
+wasm sources:
+- https://github.com/rustwasm/wasm-bindgen/tree/main/examples/without-a-bundler
+- https://rustwasm.github.io/docs/wasm-bindgen/examples/hello-world.html#hello-world
+
+## CLI
 to run:
 ```bash
 cargo build && time target/release/day5 [1|2]
@@ -10,8 +16,27 @@ to develop:
 cargo watch -x "run --release [1|2]"
 ```
 
+## Browser
+install:
+```
+cargo install wasm-pack dufs
+```
+
+build:
+```bash
+wasm-pack build --target web
+cargo watch -x "wasm-pack build --target web"
+dufs -p 5001
+```
+http://localhost:5001/index.html
+
+
 ## Output
-### Part 1
+### Browser
+![screenshot](./screenshot.png)
+
+### CLI
+#### Part 1
 ```
 Hello, adventofcode.com/2023/day/5 from rust!
 seeds: 3139431799 50198205 3647185634 110151761 2478641666 139825503 498892555 8913570 961540761 489996751 568452082 100080382 907727477 42158689 1617552130 312026427 342640189 97088268 2049289560 336766062
@@ -24,7 +49,7 @@ min_destination: 462648396
 target/release/day5 1  0.00s user 0.00s system 72% cpu 0.002 total
 ```
 
-### Part 2
+#### Part 2
 ```
 Hello, adventofcode.com/2023/day/5 from rust!
 seeds: 3139431799 50198205 3647185634 110151761 2478641666 139825503 498892555 8913570 961540761 489996751 568452082 100080382 907727477 42158689 1617552130 312026427 342640189 97088268 2049289560 336766062
