@@ -48,6 +48,63 @@ struct AlmanacMap {
     ranges: Vec<AlmanacMapRange>,
 }
 
+fn parse_almanac(almanac: &str) -> (Vec<u32>, Vec<AlmanacMap>) {
+    let mut seeds: Vec<u32> = Vec::new();
+    let mut maps: Vec<AlmanacMap> = Vec::new();
+
+    // parse the almanac into seeds and maps
+    for line in almanac.lines() {
+        if line.trim().len() == 0 {
+            continue;
+        }
+        // all the seeds
+        if line.starts_with("seeds: ") {
+            seeds = line[7..]
+                .split(' ')
+                .filter(|s| s.len() > 0 && s != &" ")
+                .map(|s| s.trim().parse().unwrap())
+                .collect::<Vec<u32>>()
+        }
+        // start of a map
+        else if line.contains(":") {
+            maps.push(AlmanacMap {
+                title: line[0..line.len() - 5].to_string(),
+                ranges: Vec::new(),
+            });
+        }
+        // entry in a map
+        else {
+            let fields = line
+                .split(' ')
+                .map(|s| s.trim().parse().unwrap())
+                .collect::<Vec<u32>>();
+            let range = AlmanacMapRange {
+                destination_range: fields[0],
+                source_range: fields[1],
+                range_length: fields[2],
+            };
+            let map = maps.last_mut().unwrap();
+            map.ranges.push(range);
+        }
+    }
+    (seeds, maps)
+}
+
+// goes from seed through all maps and returns the location (last map's entry)
+fn get_destination(seed: u32, maps: &Vec<AlmanacMap>) -> u32 {
+    let mut current_value = seed;
+    for map in maps.iter() {
+        if let Some(map_range) = map.ranges.iter().find(|r| {
+            r.source_range <= current_value && current_value < r.source_range + r.range_length
+        }) {
+            // jump to mapped destination
+            current_value = map_range.destination_range + (current_value - map_range.source_range);
+        }
+        // else: outside of mapped values, current_value stays as is
+    }
+    current_value
+}
+
 fn main() {
     println!("Hello, adventofcode.com/2023/day/5 from rust!");
     let args = std::env::args().collect::<Vec<String>>();
@@ -70,38 +127,7 @@ fn main() {
 
     println!("--- Part {} ---", if part == 1 { "One" } else { "Two" });
 
-    let mut seeds: Vec<u32> = Vec::new();
-    let mut maps: Vec<AlmanacMap> = Vec::new();
-
-    // parse the almanac into seeds and maps
-    for line in almanac.lines() {
-        if line.trim().len() == 0 {
-            continue;
-        } else if line.starts_with("seeds: ") {
-            seeds = line[7..]
-                .split(' ')
-                .filter(|s| s.len() > 0 && s != &" ")
-                .map(|s| s.trim().parse().unwrap())
-                .collect::<Vec<u32>>()
-        } else if line.contains(":") {
-            maps.push(AlmanacMap {
-                title: line[0..line.len() - 5].to_string(),
-                ranges: Vec::new(),
-            });
-        } else {
-            let fields = line
-                .split(' ')
-                .map(|s| s.trim().parse().unwrap())
-                .collect::<Vec<u32>>();
-            let range = AlmanacMapRange {
-                destination_range: fields[0],
-                source_range: fields[1],
-                range_length: fields[2],
-            };
-            let map = maps.last_mut().unwrap();
-            map.ranges.push(range);
-        }
-    }
+    let (seeds, maps) = parse_almanac(&almanac);
     println!("seeds: {:?}", seeds);
 
     let mut min_destination = u32::MAX;
@@ -113,6 +139,7 @@ fn main() {
             }
         }
     } else if part == 2 {
+        // this could be made faster by searching from the destinations backwards
         for i in 0..seeds.len() / 2 {
             let start = seeds[i * 2];
             let length = seeds[i * 2 + 1];
@@ -130,20 +157,4 @@ fn main() {
     }
 
     println!("min_destination: {:?}", min_destination);
-}
-
-fn get_destination(seed: u32, maps: &Vec<AlmanacMap>) -> u32 {
-    let mut current_value = seed;
-    for map in maps.iter() {
-        let map_range: Option<&AlmanacMapRange> = map.ranges.iter().find(|r| {
-            r.source_range <= current_value && current_value < r.source_range + r.range_length
-        });
-        if map_range.is_some() {
-            let map_range = map_range.unwrap();
-            // jump
-            current_value = map_range.destination_range + (current_value - map_range.source_range);
-        }
-        // else: the current_value stays the same
-    }
-    current_value
 }
