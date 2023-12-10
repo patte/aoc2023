@@ -13,7 +13,7 @@ cargo build && time target/release/day5 [1|2]
 
 to develop:
 ```bash
-cargo watch -x "run --release [1|2]"
+cargo watch -x "run --release -- [1|2]"
 ```
 
 ## Browser
@@ -24,8 +24,11 @@ cargo install wasm-pack dufs
 
 build:
 ```bash
-wasm-pack build --target web
-cargo watch -x "wasm-pack build --target web"
+cargo watch -s "wasm-pack build --target web"
+```
+
+serve:
+```bash
 dufs -p 5001
 ```
 http://localhost:5001/index.html

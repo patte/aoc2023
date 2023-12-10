@@ -7,7 +7,7 @@ cargo build --release && time target/release/day7 [1|2]
 
 to develop:
 ```bash
-cargo watch -x "run --release [1|2]"
+cargo watch -x "run --release -- [1|2]"
 ```
 
 ## Output
