@@ -3,5 +3,70 @@
 version = 3
 
 [[package]]
+name = "contour_tracing"
+version = "1.0.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c9efef72b4f4049ebc4b690ae8ac98cfb7d3cb50407592745ad2c83106625936"
+
+[[package]]
 name = "day10"
 version = "0.1.0"
+dependencies = [
+ "contour_tracing",
+ "enum-ordinalize",
+]
+
+[[package]]
+name = "enum-ordinalize"
+version = "4.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6926bbe8b379bb3d8e9fb718a0496481531f338866666a848e6a02da99ffab79"
+dependencies = [
+ "enum-ordinalize-derive",
+]
+
+[[package]]
+name = "enum-ordinalize-derive"
+version = "4.2.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "05aa0010e0e391b9a82dc87bfc4dbee3cb8260eec12ad9d83c12788299fa9093"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "proc-macro2"
+version = "1.0.70"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "39278fbbf5fb4f646ce651690877f89d1c5811a3d4acb27700c1cb3cdb78fd3b"
+dependencies = [
+ "unicode-ident",
+]
+
+[[package]]
+name = "quote"
+version = "1.0.33"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5267fca4496028628a95160fc423a33e8b2e6af8a5302579e322e4b520293cae"
+dependencies = [
+ "proc-macro2",
+]
+
+[[package]]
+name = "syn"
+version = "2.0.40"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "13fa70a4ee923979ffb522cacce59d34421ebdea5625e1073c4326ef9d2dd42e"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "unicode-ident",
+]
+
+[[package]]
+name = "unicode-ident"
+version = "1.0.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3354b9ac3fae1ff6755cb6db53683adb661634f67557942dea4facebec0fee4b"
