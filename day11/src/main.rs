@@ -21,8 +21,8 @@ static EXAMPLE: &str = "\
 
 #[derive(Debug, Clone, Copy, Eq)]
 struct Vector {
-    x: i32,
-    y: i32,
+    x: i64,
+    y: i64,
 }
 
 // implement &Vector + &Vector
@@ -126,15 +126,18 @@ fn main() {
 
     println!("input:\n{}", map);
 
-    let part = 1;
+    let part = 2;
     println!("part: {}", part);
 
     // growing universe
-    let mut map = double_lines_with_only_symbol('.', map);
-    map = pivot(&map);
-    map = double_lines_with_only_symbol('.', &map);
-    map = pivot(&map);
-    println!("map:\n{}", map);
+    let mut map = map.to_string();
+    if part == 1 {
+        map = double_lines_with_only_symbol('.', &map);
+        map = pivot(&map);
+        map = double_lines_with_only_symbol('.', &map);
+        map = pivot(&map);
+        println!("map:\n{}", map);
+    }
 
     // parse map into galaxies
     let mut galaxies: Vec<Galaxy> = Vec::new();
@@ -144,24 +147,60 @@ fn main() {
                 galaxies.push(Galaxy {
                     id: galaxies.len() + 1,
                     pos: Vector {
-                        x: col as i32,
-                        y: row as i32,
+                        x: col as i64,
+                        y: row as i64,
                     },
                 });
             }
         }
     }
 
+    // grow universe part 2
+    // apply growth to vector of galaxies
+    if part == 2 {
+        let mut grow_lines = Vec::new();
+        for (row, line) in map.lines().enumerate() {
+            if line.chars().all(|c| c == '.') {
+                grow_lines.push(row);
+            }
+        }
+        let mut grow_cols = Vec::new();
+        let map_pivoted = pivot(&map);
+        for (col, line) in map_pivoted.lines().enumerate() {
+            if line.chars().all(|c| c == '.') {
+                grow_cols.push(col);
+            }
+        }
+        //println!("grow_lines:\n{:?}\ngrow_cols:\n{:?}", grow_lines, grow_cols);
+        //let add_amount = 10;
+        let add_amount = 1000000;
+        // apply growth to all components smaller then the grow lines/cols
+        for galaxy in &mut galaxies {
+            galaxy.pos.x += grow_cols
+                .iter()
+                .filter(|&&c| c <= galaxy.pos.x as usize)
+                .count() as i64
+                * (add_amount - 1);
+            galaxy.pos.y += grow_lines
+                .iter()
+                .filter(|&&c| c <= galaxy.pos.y as usize)
+                .count() as i64
+                * (add_amount - 1);
+        }
+    }
+
     // draw map with galaxy ids
     let mut map_with_galaxy_ids = map.clone();
-    for galaxy in &galaxies {
-        map_with_galaxy_ids = set_char_at_position(
-            &galaxy.pos,
-            &map_with_galaxy_ids,
-            galaxy.id.to_string().chars().rev().next().unwrap(),
-        );
+    if part == 1 {
+        for galaxy in &galaxies {
+            map_with_galaxy_ids = set_char_at_position(
+                &galaxy.pos,
+                &map_with_galaxy_ids,
+                galaxy.id.to_string().chars().rev().next().unwrap(),
+            );
+        }
+        println!("map_with_galaxy_ids:\n{}", map_with_galaxy_ids);
     }
-    //println!("map_with_galaxy_ids:\n{}", map_with_galaxy_ids);
 
     // galaxy pairs
     let mut galaxy_pairs: Vec<(Galaxy, Galaxy)> = Vec::new();
@@ -183,37 +222,39 @@ fn main() {
 
     // find shortest path between all pairs of galaxies,
     // one step can only be made in one direction of either: up, down, left, right
-    // v is normalized vector, the loops for x and y need to rasterize the vector onto the map
+    // the direct path is just the length of the vector
     let shortest_paths = galaxy_pair_vectors
         .iter()
         .map(|(_, _, v)| v.x.abs() + v.y.abs());
 
-    let sum_of_shortest_paths = shortest_paths.clone().sum::<i32>();
+    let sum_of_shortest_paths = shortest_paths.clone().sum::<i64>();
     println!("sum_of_shortest_paths: {}", sum_of_shortest_paths);
 
     // draw map with galaxy ids and shortest path
-    let mut map_with_galaxy_ids_and_shortest_path = map_with_galaxy_ids.clone();
-    for (galaxy1, galaxy2, v) in galaxy_pair_vectors.iter() {
-        if galaxy1.id == 5 && galaxy2.id == galaxies.len() - 2 {
-            let steps_x = v.x.abs();
-            let steps_y = v.y.abs();
-            for step in 1..steps_x.max(steps_y) {
-                let step_v = Vector {
-                    x: (v.x as f32 / steps_x as f32 * step.min(steps_x) as f32).round() as i32,
-                    y: (v.y as f32 / steps_y as f32 * step.min(steps_y) as f32).round() as i32,
-                };
-                let step_pos = &galaxy1.pos + &step_v;
-                map_with_galaxy_ids_and_shortest_path = set_char_at_position(
-                    &step_pos,
-                    &map_with_galaxy_ids_and_shortest_path,
-                    //std::char::from_digit((galaxy1.id) as u32, 10).unwrap(),
-                    'X',
-                );
+    if part == 1 {
+        let mut map_with_galaxy_ids_and_shortest_path = map_with_galaxy_ids.clone();
+        for (galaxy1, galaxy2, v) in galaxy_pair_vectors.iter() {
+            if galaxy1.id == 5 && galaxy2.id == galaxies.len() - 2 {
+                let steps_x = v.x.abs();
+                let steps_y = v.y.abs();
+                for step in 1..steps_x.max(steps_y) {
+                    let step_v = Vector {
+                        x: (v.x as f32 / steps_x as f32 * step.min(steps_x) as f32).round() as i64,
+                        y: (v.y as f32 / steps_y as f32 * step.min(steps_y) as f32).round() as i64,
+                    };
+                    let step_pos = &galaxy1.pos + &step_v;
+                    map_with_galaxy_ids_and_shortest_path = set_char_at_position(
+                        &step_pos,
+                        &map_with_galaxy_ids_and_shortest_path,
+                        //std::char::from_digit((galaxy1.id) as u32, 10).unwrap(),
+                        'X',
+                    );
+                }
             }
         }
+        println!(
+            "map_with_galaxy_ids_and_shortest_path:\n{}",
+            map_with_galaxy_ids_and_shortest_path
+        );
     }
-    println!(
-        "map_with_galaxy_ids_and_shortest_path:\n{}",
-        map_with_galaxy_ids_and_shortest_path
-    );
 }
