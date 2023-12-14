@@ -95,7 +95,8 @@ fn get_destination(seed: u32, maps: &Vec<AlmanacMap>) -> u32 {
     let mut current_value = seed;
     for map in maps.iter() {
         if let Some(map_range) = map.ranges.iter().find(|r| {
-            r.source_range <= current_value && current_value < r.source_range + r.range_length
+            r.source_range <= current_value
+                && (current_value as u64) < (r.source_range as u64 + r.range_length as u64)
         }) {
             // jump to mapped destination
             current_value = map_range.destination_range + (current_value - map_range.source_range);

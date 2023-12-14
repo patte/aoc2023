@@ -7,7 +7,7 @@ cargo build --release && time target/release/day13
 
 to develop:
 ```bash
-RUST_BACKTRACE=1 cargo watch -x "run --release" --ignore "output*"
+RUST_BACKTRACE=1 cargo watch -x "run" --ignore "output*"
 ```
 
 ### Part 1
